@@ -5,3 +5,9 @@
 __pycache__/
 
 # Project
+data/*
+data/cache/*
+!data/maintenance_categories.ttl.bz2
+!data/cache/type_lexicalisations.p.bz2
+results/*
+logs/*
