@@ -1,0 +1,110 @@
+# Cat2Ax settings
+
+cat2ax:
+  pattern_confidence: 0.05
+
+# Logging settings
+
+logging:
+  level: 'DEBUG'
+  to_file: True
+  filename: 'cat2ax'
+
+# File/Caching settings
+
+files:
+  dbpedia:
+    taxonomy:
+      filename: 'dbpedia_2016-10.nt'
+      url: 'http://downloads.dbpedia.org/2016-10/dbpedia_2016-10.nt'
+    labels:
+      filename: 'labels_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/labels_en.ttl.bz2'
+    categories:
+      filename: 'skos_categories_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/skos_categories_en.ttl.bz2'
+    article_categories:
+      filename: 'article_categories_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/article_categories_en.ttl.bz2'
+    instance_types:
+      filename: 'instance_types_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/instance_types_en.ttl.bz2'
+    transitive_instance_types:
+      filename: 'instance_types_transitive_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/instance_types_transitive_en.ttl.bz2'
+    mappingbased_literals:
+      filename: 'mappingbased_literals_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/mappingbased_literals_en.ttl.bz2'
+    mappingbased_objects:
+      filename: 'mappingbased_objects_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/mappingbased_objects_en.ttl.bz2'
+    anchor_texts:
+      filename: 'anchor_text_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2'
+    redirects:
+      filename: 'redirects_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/redirects_en.ttl.bz2'
+    nif_context:
+      filename: 'nif_context_en.ttl.bz2'
+      url: 'http://downloads.dbpedia.org/2016-10/core-i18n/en/nif_context_en.ttl.bz2'
+    maintenance_categories:
+      filename: 'maintenance_categories.ttl.bz2'
+
+results:
+  cat2ax:
+    relation_axioms: 'cat2ax_relation-axioms.csv'
+    type_axioms: 'cat2ax_type-axioms.csv'
+    relation_assertions: 'cat2ax_relation-assertions.csv'
+    relation_assertion_triples: 'cat2ax_relation-assertions.ttl.bz2'
+    type_assertions: 'cat2ax_type-assertions.csv'
+    type_assertion_triples: 'cat2ax_type-assertions.ttl.bz2'
+  cdf:
+    relation_axioms: 'cdf_relation-axioms.csv'
+    type_axioms: 'cdf_type-axioms.csv'
+    relation_assertions: 'cdf_relation-assertions.csv'
+    relation_assertion_triples: 'cdf_relation-assertions.ttl.bz2'
+    type_assertions: 'cdf_type-assertions.csv'
+    type_assertion_triples: 'cdf_type-assertions.ttl.bz2'
+  catriple:
+    relation_axioms: 'catriple_relation-axioms.csv'
+    relation_assertions: 'catriple_relation-assertions.csv'
+    relation_assertion_triples: 'catriple_relation-assertions.ttl.bz2'
+
+cache:
+  spacy_docs:
+    filename: 'spacy-docs'
+    version: 1
+  dbpedia_resource_type_mapping:
+    filename: 'dbpedia-resource-type-mapping'
+    version: 1
+  dbpedia_resource_labels:
+    filename: 'dbpedia-resource-labels'
+    version: 1
+  dbpedia_resource_properties:
+    filename: 'dbpedia-resource-properties'
+    version: 1
+  dbpedia_resource_redirects:
+    filename: 'dbpedia-resource-redirects'
+    version: 1
+  dbpedia_resource_inverse_lexicalisations:
+    filename: 'dbpedia-resource-inverse-lexicalisations'
+    version: 1
+  dbpedia_type_lexicalisations:
+    filename: 'dbpedia-type-lexicalisations'
+    version: 1
+    compress: True
+  dbpedia_functional_predicates:
+    filename: 'dbpedia-functional-predicates'
+    version: 2  # version 1: strict; version 2: 5% tolerance
+  dbpedia_categories:
+    filename: 'dbpedia-categories'
+    version: 1
+  dbpedia_category_resources:
+    filename: 'dbpedia-category-resources'
+    version: 1
+  dbpedia_category_children:
+    filename: 'dbpedia-category-children'
+    version: 1
+  dbpedia_category_statistics:
+    filename: 'dbpedia-category-statistics'
+    version: 1
