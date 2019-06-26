@@ -1,6 +1,3 @@
-# TODO: document+structure
-
-
 import datetime
 import util
 from collections import defaultdict
@@ -14,67 +11,81 @@ import impl.category.nlp as cat_nlp
 import impl.util.nlp as nlp_util
 import impl.util.rdf as rdf_util
 import pandas as pd
+from spacy.tokens import Doc
 
 
 def run_extraction():
-   util.get_logger().debug('Step 1: Candidate Selection')
-   candidate_sets = cat_set.get_category_sets()
+    """Run the Cat2Ax extraction procedure and create result files for relation/type axioms and assertions.
 
-   util.get_logger().debug('Step 2: Pattern Mining')
-   patterns = _extract_patterns(candidate_sets)
+    The extraction is performed in four steps:
+    1) Identify candidate category sets that share a textual pattern
+    2) Find characteristic properties and types for candidate sets and combine them to patterns
+    3) Apply patterns to all categories to extract axioms
+    4) Apply axioms to their respective categories to extract assertions
+    """
+    util.get_logger().debug('Step 1: Candidate Selection')
+    candidate_sets = cat_set.get_category_sets()
 
-   util.get_logger().debug('Step 3: Pattern Application')
-   relation_axioms, type_axioms = _extract_axioms(patterns)
+    util.get_logger().debug('Step 2: Pattern Mining')
+    patterns = _extract_patterns(candidate_sets)
 
-   util.get_logger().debug('Step 4: Axiom Application & Post-Filtering')
-   relation_assertions, type_assertions = _extract_assertions(relation_axioms, type_axioms)
+    util.get_logger().debug('Step 3: Pattern Application')
+    relation_axioms, type_axioms = _extract_axioms(patterns)
 
-   pd.DataFrame(data=relation_axioms, columns=['cat', 'pred', 'val', 'confidence']).to_csv(util.get_results_file('results.cat2ax.relation_axioms'), sep=';', index=False)
-   pd.DataFrame(data=type_axioms, columns=['cat', 'pred', 'val', 'confidence']).to_csv(util.get_results_file('results.cat2ax.type_axioms'), sep=';', index=False)
+    util.get_logger().debug('Step 4: Axiom Application & Post-Filtering')
+    relation_assertions, type_assertions = _extract_assertions(relation_axioms, type_axioms)
 
-   df_relation_assertions = pd.DataFrame(data=relation_assertions, columns=['sub', 'pred', 'val'])
-   df_relation_assertions.to_csv(util.get_results_file('results.cat2ax.relation_assertions'), sep=';', index=False)
-   rdf_util.write_triple_file(df_relation_assertions, util.get_results_file('results.cat2ax.relation_assertion_triples'))
+    util.get_logger().debug('Finished extraction - persisting results..')
+    pd.DataFrame(data=relation_axioms, columns=['cat', 'pred', 'val', 'confidence']).to_csv(util.get_results_file('results.cat2ax.relation_axioms'), sep=';', index=False)
+    pd.DataFrame(data=type_axioms, columns=['cat', 'pred', 'val', 'confidence']).to_csv(util.get_results_file('results.cat2ax.type_axioms'), sep=';', index=False)
 
-   df_type_assertions = pd.DataFrame(data=type_assertions, columns=['sub', 'pred', 'val'])
-   df_type_assertions.to_csv(util.get_results_file('results.cat2ax.type_assertions'), sep=';', index=False)
-   rdf_util.write_triple_file(df_type_assertions, util.get_results_file('results.cat2ax.type_assertion_triples'))
+    df_relation_assertions = pd.DataFrame(data=relation_assertions, columns=['sub', 'pred', 'val'])
+    df_relation_assertions.to_csv(util.get_results_file('results.cat2ax.relation_assertions'), sep=';', index=False)
+    rdf_util.write_triple_file(df_relation_assertions, util.get_results_file('results.cat2ax.relation_assertion_triples'))
+
+    df_type_assertions = pd.DataFrame(data=type_assertions, columns=['sub', 'pred', 'val'])
+    df_type_assertions.to_csv(util.get_results_file('results.cat2ax.type_assertions'), sep=';', index=False)
+    rdf_util.write_triple_file(df_type_assertions, util.get_results_file('results.cat2ax.type_assertion_triples'))
 
 
 # --- PATTERN MINING ---
 
-def _extract_patterns(candidate_sets):
+def _extract_patterns(candidate_sets: list) -> dict:
+    """Return extracted property/type patterns for each set in `candidate_sets`."""
     patterns = defaultdict(lambda: {'preds': defaultdict(list), 'types': defaultdict(list)})
 
     for parent, categories, (first_words, last_words) in candidate_sets:
-        predicate_frequencies = defaultdict(list)
-        type_frequencies = defaultdict(list)
+        property_scores = defaultdict(list)
+        type_scores = defaultdict(list)
         type_lexicalisation_scores = _get_type_lexicalisation_scores(first_words + last_words)
 
         categories_with_matches = {cat: _get_match_for_category(cat, first_words, last_words) for cat in categories}
         categories_with_matches = {cat: match for cat, match in categories_with_matches.items() if cat_store.is_usable(cat) and match}
         for cat, match in categories_with_matches.items():
-            # compute predicate frequencies
             statistics = cat_store.get_statistics(cat)
             resource_lexicalisation_scores = _get_resource_lexicalisation_scores(match)
+            # compute property scores
             for (pred, val), prop_freq in statistics['property_frequencies'].items():
                 if val in resource_lexicalisation_scores:
-                    predicate_frequencies[pred].append(prop_freq * resource_lexicalisation_scores[val])
+                    property_scores[pred].append(prop_freq * resource_lexicalisation_scores[val])
+            # compute type scores
             for t, type_freq in statistics['type_frequencies'].items():
-                type_frequencies[t].append(type_freq * type_lexicalisation_scores[t])
-        if predicate_frequencies:
+                type_scores[t].append(type_freq * type_lexicalisation_scores[t])
+        if property_scores:
             # pad frequencies to get the correct median
-            predicate_frequencies = {pred: freqs + ([0]*(len(categories_with_matches)-len(freqs))) for pred, freqs in predicate_frequencies.items()}
-            pred, freqs = max(predicate_frequencies.items(), key=lambda x: np.median(x[1]))
+            property_scores = {pred: freqs + ([0]*(len(categories_with_matches)-len(freqs))) for pred, freqs in property_scores.items()}
+            pred, freqs = max(property_scores.items(), key=lambda x: np.median(x[1]))
+            # extract pattern with best median
             med = np.median(freqs)
             if dbp_util.is_dbp_type(pred) and med > 0:
                 for _ in categories_with_matches:
                     patterns[(tuple(first_words), tuple(last_words))]['preds'][pred].append(med)
-        if type_frequencies:
+        if type_scores:
             # pad frequencies to get the correct median
-            type_frequencies = {t: freqs + ([0]*(len(categories_with_matches)-len(freqs))) for t, freqs in type_frequencies.items()}
-            max_median = max(np.median(freqs) for freqs in type_frequencies.values())
-            types = {t for t, freqs in type_frequencies.items() if np.median(freqs) >= max_median}
+            type_scores = {t: freqs + ([0]*(len(categories_with_matches)-len(freqs))) for t, freqs in type_scores.items()}
+            # extract pattern with best median
+            max_median = max(np.median(freqs) for freqs in type_scores.values())
+            types = {t for t, freqs in type_scores.items() if np.median(freqs) >= max_median}
             if max_median > 0:
                 for _ in categories_with_matches:
                     for t in types:
@@ -83,11 +94,13 @@ def _extract_patterns(candidate_sets):
 
 
 def _get_match_for_category(category: str, first_words: tuple, last_words: tuple) -> str:
+    """Return variable part of the category name."""
     doc = cat_set._remove_by_phrase(cat_nlp.parse_category(category))
     return doc[len(first_words):len(doc)-len(last_words)].text
 
 
-def _get_resource_lexicalisation_scores(text):
+def _get_resource_lexicalisation_scores(text: str) -> dict:
+    """Return resource lexicalisation scores for a given `text`."""
     lexicalisation_scores = {}
     if not text:
         return lexicalisation_scores
@@ -100,7 +113,8 @@ def _get_resource_lexicalisation_scores(text):
     return lexicalisation_scores
 
 
-def _get_type_lexicalisation_scores(words):
+def _get_type_lexicalisation_scores(words: list) -> dict:
+    """Return type lexicalisation scores for a given set of `words`."""
     lexicalisation_scores = defaultdict(lambda: 0)
     for lemma in [nlp_util.parse(w)[0].lemma_ for w in words]:
         for t, score in dbp_store.get_type_lexicalisations(lemma).items():
@@ -111,9 +125,11 @@ def _get_type_lexicalisation_scores(words):
 
 # --- PATTERN APPLICATION ---
 
-def _extract_axioms(patterns):
+def _extract_axioms(patterns: dict) -> dict:
+    """Return axioms extracted by applying `patterns` to all categories."""
     category_axioms = defaultdict(set)
 
+    # process front/back/front+back patterns individually to reduce computational complexity
     front_pattern_dict = {}
     for (front_pattern, back_pattern), axiom_patterns in _get_confidence_pattern_set(patterns, True, False).items():
         _fill_dict(front_pattern_dict, list(front_pattern), lambda d: _fill_dict(d, list(reversed(back_pattern)), axiom_patterns))
@@ -149,6 +165,7 @@ def _extract_axioms(patterns):
         if enclosing_type_axiom:
             cat_type_axioms.append(enclosing_type_axiom)
 
+        # apply selection of axioms (multiple axioms can be selected if they do not contradict each other)
         prop_axioms_by_pred = {a[1]: {x for x in cat_prop_axioms if x[1] == a[1]} for a in cat_prop_axioms}
         for pred, similar_prop_axioms in prop_axioms_by_pred.items():
             if dbp_store.is_object_property(pred):
@@ -167,7 +184,8 @@ def _extract_axioms(patterns):
     return category_axioms
 
 
-def _get_confidence_pattern_set(pattern_set, has_front, has_back):
+def _get_confidence_pattern_set(pattern_set: dict, has_front: bool, has_back: bool) -> dict:
+    """Return pattern confidences per pattern."""
     result = {}
     for pattern, axiom_patterns in pattern_set.items():
         if bool(pattern[0]) == has_front and bool(pattern[1]) == has_back:
@@ -183,7 +201,8 @@ def _get_confidence_pattern_set(pattern_set, has_front, has_back):
 
 MARKER_HIT = '_marker_hit_'
 MARKER_REVERSE = '_marker_reverse_'
-def _fill_dict(dictionary, elements, leaf):
+def _fill_dict(dictionary: dict, elements: list, leaf):
+    """Recursively fill a dictionary with a given sequence of elements and finally apply/append `leaf`."""
     if not elements:
         if callable(leaf):
             if MARKER_REVERSE not in dictionary:
@@ -197,7 +216,8 @@ def _fill_dict(dictionary, elements, leaf):
         _fill_dict(dictionary[elements[0]], elements[1:], leaf)
 
 
-def _detect_pattern(pattern_dict, words):
+def _detect_pattern(pattern_dict: dict, words: list) -> tuple:
+    """Search for a pattern of `words` in `pattern_dict` and return if found - else return None."""
     pattern_length = 0
     ctx = pattern_dict
     for word in words:
@@ -214,7 +234,8 @@ def _detect_pattern(pattern_dict, words):
     return None, None
 
 
-def _get_axioms_for_cat(axiom_patterns, cat, text_diff, words_same):
+def _get_axioms_for_cat(axiom_patterns: dict, cat: str, text_diff: str, words_same: list) -> tuple:
+    """Return axioms by applying the best matching pattern to a category."""
     pattern_confidence = util.get_config('cat2ax.pattern_confidence')
     prop_axiom = None
     type_axiom = None
@@ -238,7 +259,8 @@ def _get_axioms_for_cat(axiom_patterns, cat, text_diff, words_same):
     return prop_axiom, type_axiom
 
 
-def _find_axioms(pattern_dict, cat, cat_doc):
+def _find_axioms(pattern_dict: dict, cat: str, cat_doc: Doc) -> tuple:
+    """Iterate over possible patterns to extract and return best axioms."""
     cat_words = [w.text for w in cat_doc]
     axiom_patterns, pattern_lengths = _detect_pattern(pattern_dict, cat_words)
     if axiom_patterns:
@@ -256,7 +278,8 @@ def _find_axioms(pattern_dict, cat, cat_doc):
 
 # --- AXIOM APPLICATION & POST-FILTERING ---
 
-def _extract_assertions(relation_axioms, type_axioms):
+def _extract_assertions(relation_axioms: set, type_axioms: set) -> tuple:
+    """Return assertions by applying the axioms to their respective categories."""
     relation_assertions = {(res, pred, val) for cat, pred, val, _ in relation_axioms for res in cat_store.get_resources(cat)}
     new_relation_assertions = {(res, pred, val) for res, pred, val in relation_assertions if pred not in dbp_store.get_properties(res) or val not in dbp_store.get_properties(res)[pred]}
 

@@ -1,7 +1,11 @@
-# Cat2Ax settings
+# Approach settings
 
 cat2ax:
   pattern_confidence: 0.05
+cdf:
+  alpha: 0.6
+  beta: 0.6
+  min_support: 10
 
 # Logging settings
 
