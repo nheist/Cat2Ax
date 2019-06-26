@@ -8,6 +8,6 @@ __pycache__/
 data/*
 data/cache/*
 !data/maintenance_categories.ttl.bz2
-!data/cache/type_lexicalisations.p.bz2
+!data/cache/dbpedia-type-lexicalisations_v1.p.bz2
 results/*
 logs/*
