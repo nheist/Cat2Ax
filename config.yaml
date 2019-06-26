@@ -108,3 +108,6 @@ cache:
   dbpedia_category_statistics:
     filename: 'dbpedia-category-statistics'
     version: 1
+  dbpedia_category_sets:
+    filename: 'dbpedia-category-sets'
+    version: 1
