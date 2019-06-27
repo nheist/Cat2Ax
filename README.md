@@ -1,6 +1,8 @@
 # Cat2Ax
 
-Cat2Ax is an approach for the extraction of axioms and assertions from Wikipedia categories.
+Cat2Ax is an approach for the extraction of axioms and assertions for Wikipedia categories to enrich the ontology of a Wikipedia-based knowledge graph.
+
+
 In this package you can also find implementations of the two most closely related approaches Catriple and C-DF.
 
 __How to cite?__
@@ -61,7 +63,9 @@ If you don't want to run the extraction yourself, you can find the results [here
 
 ## Documentation
 
-TODO: ARCHITECTURE
+The code is documented on function-level. For an overview of the architecture of the extraction tool, refer to this diagram:
+
+![Architecture Diagram](documentation/architecture_diagram.jpg)
 
 ## License
 MIT.
