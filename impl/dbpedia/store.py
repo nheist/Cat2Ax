@@ -4,7 +4,6 @@ from . import util as dbp_util
 from collections import defaultdict
 import networkx as nx
 from typing import Optional
-import functools
 
 
 # DBpedia resources

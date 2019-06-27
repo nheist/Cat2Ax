@@ -3,6 +3,10 @@
 Cat2Ax is an approach for the extraction of axioms and assertions from Wikipedia categories.
 In this package you can also find implementations of the two most closely related approaches Catriple and C-DF.
 
+__How to cite?__
+
+```Heist, Nicolas; Paulheim, Heiko. Uncovering the Semantics of Wikipedia Categories. ISWC 2019. Auckland, NZ.```
+
 ## Configuration
 ### Prerequisites
 - Python 3
