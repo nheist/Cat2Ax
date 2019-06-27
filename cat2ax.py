@@ -125,9 +125,10 @@ def _get_type_lexicalisation_scores(words: list) -> dict:
 
 # --- PATTERN APPLICATION ---
 
-def _extract_axioms(patterns: dict) -> dict:
+def _extract_axioms(patterns: dict) -> tuple:
     """Return axioms extracted by applying `patterns` to all categories."""
-    category_axioms = defaultdict(set)
+    relation_axioms = set()
+    type_axioms = set()
 
     # process front/back/front+back patterns individually to reduce computational complexity
     front_pattern_dict = {}
@@ -172,16 +173,16 @@ def _extract_axioms(patterns: dict) -> dict:
                 res_labels = {a[2]: dbp_store.get_label(a[2]) for a in similar_prop_axioms}
                 similar_prop_axioms = {a for a in similar_prop_axioms if all(res_labels[a[2]] == val or res_labels[a[2]] not in val for val in res_labels.values())}
             best_prop_axiom = max(similar_prop_axioms, key=operator.itemgetter(3))
-            category_axioms[cat].add(RelationAxiom(best_prop_axiom[1], best_prop_axiom[2], best_prop_axiom[3]))
+            relation_axioms.add(best_prop_axiom)
 
         best_type_axiom = None
         for type_axiom in sorted(cat_type_axioms, key=operator.itemgetter(3), reverse=True):
             if not best_type_axiom or type_axiom[2] in dbp_store.get_transitive_subtypes(best_type_axiom[2]):
                 best_type_axiom = type_axiom
         if best_type_axiom:
-            category_axioms[cat].add(TypeAxiom(best_type_axiom[2], best_type_axiom[3]))
+            type_axioms.add(best_type_axiom)
 
-    return category_axioms
+    return relation_axioms, type_axioms
 
 
 def _get_confidence_pattern_set(pattern_set: dict, has_front: bool, has_back: bool) -> dict:
@@ -292,61 +293,6 @@ def _extract_assertions(relation_axioms: set, type_axioms: set) -> tuple:
     filtered_new_type_assertions = {(res, pred, t) for res, pred, t in new_type_assertions_transitive if not dbp_store.get_disjoint_types(t).intersection(dbp_store.get_transitive_types(res))}
 
     return filtered_new_relation_assertions, filtered_new_type_assertions
-
-
-# --- AXIOM CLASSES ---
-
-class Axiom:
-    def __init__(self, predicate: str, value: str, confidence: float):
-        self.predicate = predicate
-        self.value = value
-        self.confidence = confidence
-
-    def implies(self, other):
-        return self.predicate == other.predicate and self.value == other.value
-
-    def contradicts(self, other):
-        raise NotImplementedError("Please use the sublcasses.")
-
-    def accepts_resource(self, dbp_resource: str) -> bool:
-        raise NotImplementedError("Please use the sublcasses.")
-
-    def rejects_resource(self, dbp_resource: str) -> bool:
-        raise NotImplementedError("Please use the sublcasses.")
-
-
-class TypeAxiom(Axiom):
-    def __init__(self, value: str, confidence: float):
-        super().__init__(rdf_util.PREDICATE_TYPE, value, confidence)
-
-    def implies(self, other):
-        return super().implies(other) or other.value in dbp_store.get_transitive_supertype_closure(self.value)
-
-    def contradicts(self, other):
-        return other.value in dbp_store.get_disjoint_types(self.value)
-
-    def accepts_resource(self, dbp_resource: str) -> bool:
-        return self.value in dbp_store.get_transitive_types(dbp_resource)
-
-    def rejects_resource(self, dbp_resource: str) -> bool:
-        return self.value in {dt for t in dbp_store.get_types(dbp_resource) for dt in dbp_store.get_disjoint_types(t)}
-
-
-class RelationAxiom(Axiom):
-    def contradicts(self, other):
-        if self.predicate != other.predicate or not dbp_store.is_functional(self.predicate):
-            return False
-        return dbp_store.resolve_redirect(self.value) != dbp_store.resolve_redirect(other.value)
-
-    def accepts_resource(self, dbp_resource: str) -> bool:
-        props = dbp_store.get_properties(dbp_resource)
-        return self.predicate in props and (self.value in props[self.predicate] or dbp_store.resolve_redirect(self.value) in props[self.predicate])
-
-    def rejects_resource(self, dbp_resource: str) -> bool:
-        if not dbp_store.is_functional(self.predicate):
-            return False
-        props = dbp_store.get_properties(dbp_resource)
-        return self.predicate in props and self.value not in props[self.predicate] and dbp_store.resolve_redirect(self.value) not in props[self.predicate]
 
 
 # --- START SCRIPT ---
