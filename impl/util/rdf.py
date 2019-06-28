@@ -57,7 +57,7 @@ def format_object_triple(sub, pred, obj):
 def write_triple_file(triple_df: pd.DataFrame, filepath: str):
     """Write triples from `triple_df` (using 'sub', 'pred', 'val' columns) to a file at `filepath`."""
     open_file = bz2.open if filepath.endswith('bz2') else open
-    with open_file(filepath, mode='w') as file_writer:
+    with open_file(filepath, mode='wt') as file_writer:
         for _, row in triple_df.iterrows():
             file_writer.write(format_object_triple(row['sub'], row['pred'], row['val']))
 
