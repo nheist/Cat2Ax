@@ -9,7 +9,7 @@ __How to cite?__
 
 ```Heist, Nicolas; Paulheim, Heiko. Uncovering the Semantics of Wikipedia Categories. ISWC 2019. Auckland, NZ.```
 
-A preprint of the paper can be found [on arXiv](https://arxiv.org/submit/2748142).
+A preprint of the paper can be found [on arXiv](http://arxiv.org/abs/1906.12089).
 
 ## Configuration
 ### Prerequisites
