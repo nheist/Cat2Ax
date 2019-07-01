@@ -15,7 +15,7 @@ __How to cite?__
 - pipenv (https://pipenv.readthedocs.io/en/latest/)
 
 ### System Requirements
-- You need a machine with at least XX GB of RAM as we load most of DBpedia in memory to speed up the extraction
+- You need a machine with at least 100 GB of RAM as we load most of DBpedia in memory to speed up the extraction
   - If that is not possible for you and you nevertheless want to run the extraction, you can change the functionalities in `impl.category.store` and `impl.dbpedia.store` to use a database instead 
 - During the first execution of an extraction you need a stable internet connection as the required DBpedia files are downloaded automatically 
 
