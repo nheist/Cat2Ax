@@ -90,7 +90,7 @@ def _find_Y(X: Span, subcat_uri: str) -> Optional[str]:
         return None
     subcat = nlp_util.parse(cat_store.get_label(subcat_uri))
     if subcat.text.lower().endswith(' ' + X.text.lower()):  # "YX"
-        if subcat[-(len(X)+1)].pos_ == 'ADP':
+        if len(X) >= len(subcat) or subcat[-(len(X)+1)].pos_ == 'ADP':
             return None
         return subcat[:-len(X)]
     elif subcat.text.lower().startswith(X.text.lower() + ' '):  # "X <prep> Y"
