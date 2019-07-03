@@ -6,6 +6,7 @@ from collections import defaultdict
 import operator
 import impl.util.nlp as nlp_util
 import impl.category.store as cat_store
+import impl.category.nlp as cat_nlp
 import impl.dbpedia.store as dbp_store
 import impl.dbpedia.util as dbp_util
 import impl.util.rdf as rdf_util
@@ -68,7 +69,7 @@ def _extract_patterns() -> dict:
 
 def _find_X_and_Z(cat_uri: str) -> tuple:
     """Return both X and Z, if available, or X only."""
-    cat = nlp_util.parse(cat_store.get_label(cat_uri))
+    cat = cat_nlp.parse_category(cat_store.get_label(cat_uri))
     by_indices = [w.i for w in cat if w.text == 'by']
     if len(by_indices) > 1:
         return None
