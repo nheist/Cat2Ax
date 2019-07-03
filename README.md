@@ -16,6 +16,8 @@ A preprint of the paper can be found [on arXiv](http://arxiv.org/abs/1906.12089)
 - Python 3
 - pipenv (https://pipenv.readthedocs.io/en/latest/)
 
+Note: If you have problems with your pipenv installation, you can also run the code directly via python. Just make sure to install all the dependencies given in `Pipfile` and `Pipfile.lock`. 
+
 ### System Requirements
 - You need a machine with at least 100 GB of RAM as we load most of DBpedia in memory to speed up the extraction
   - If that is not possible for you and you nevertheless want to run the extraction, you can change the functionalities in `impl.category.store` and `impl.dbpedia.store` to use a database instead 
@@ -47,9 +49,11 @@ You can configure the application-specific parameters as well as logging- and fi
 
 ## Usage
 
-- Run one of the extraction methods with pipenv:
+- Run the extraction methods with pipenv:
 ```
-pipenv run {cat2ax.py | catriple.py | cdf.py}
+pipenv run cat2ax.py
+pipenv run catriple.py
+pipenv run cdf.py
 ```
 (All the required resources - e.g. DBpedia files - will be downloaded automatically and on-demand)
 
