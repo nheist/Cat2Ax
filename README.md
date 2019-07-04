@@ -24,16 +24,19 @@ Note: If you have problems with your pipenv installation, you can also run the c
 
 ### Setup
 - In the project source directory, create and initialize a virtual environment with pipenv (run in terminal):
+
 ```
 pipenv install
 ```
 
 - Download the spacy corpus (run in terminal):
+
 ```
 pipenv run python -m spacy download en_core_web_lg
 ```
 
 - Download the wordnet corpus of nltk (run in python):
+
 ```
 import nltk
 nltk.download('wordnet')
@@ -47,25 +50,30 @@ You can configure the application-specific parameters as well as logging- and fi
 
 ### Extractors
 Run the extraction methods with pipenv:
+
 ```
 pipenv run cat2ax.py    # approx.  7h runtime
 pipenv run catriple.py  # approx.  8h runtime
 pipenv run cdf.py       # approx. 12h runtime
 ```
+
 All the required resources, like DBpedia files, will be downloaded automatically during execution.
 The extracted axioms and assertions are placed in the `results` folder.
 
 ### Lexicalisations
 If you want to extract the type lexicalisations (not necessary as we provide them as cache file), run the following:
+
 ```
 pipenv run type_lexicalisations.py  # runtime of several days!
 ```
 
 ### Graphs
 To reproduce the main graphs of the paper, first run the extraction (or download the results and place them in the `results` folder) and then run the following:
+
 ```
 pipenv run graphs.py     # approx. 0.5h runtime
 ```
+
 The produced graphs are placed in the `results` folder.
 
 ## Results
