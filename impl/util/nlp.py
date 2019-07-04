@@ -56,7 +56,7 @@ def tag_lexical_head(doc: Doc, valid_words=None) -> Doc:
     return doc
 
 
-def parse(text: str, disable_normalization=False, skip_cache=True) -> Doc:
+def parse(text: str, disable_normalization=False, skip_cache=False) -> Doc:
     if not disable_normalization:
         split_text = text.split(' ')
         if len(split_text) == 1 or (len(split_text) > 1 and not (text[1].isupper() or split_text[1].istitle())):
