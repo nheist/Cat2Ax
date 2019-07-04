@@ -11,6 +11,7 @@ spacy = "*"
 pyyaml = "*"
 nltk = "*"
 pynif = "*"
+matplotlib = "*"
 
 [dev-packages]
 

@@ -73,6 +73,10 @@ results:
     relation_axioms: 'catriple_relation-axioms.csv'
     relation_assertions: 'catriple_relation-assertions.csv'
     relation_assertion_triples: 'catriple_relation-assertions.ttl.bz2'
+  graphs:
+    minimum_confidence: 'graph-minimum-confidence.pdf'
+    dbpedia_coverage: 'graph-dbpedia-coverage.pdf'
+    dbpedia_unknown_resources: 'graph-dbpedia-unknown-resources.pdf'
 
 cache:
   spacy_docs:

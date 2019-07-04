@@ -2,7 +2,6 @@
 
 Cat2Ax is an approach for the extraction of axioms and assertions for Wikipedia categories to enrich the ontology of a Wikipedia-based knowledge graph.
 
-
 In this package you can also find implementations of the two most closely related approaches Catriple and C-DF.
 
 __How to cite?__
@@ -24,10 +23,7 @@ Note: If you have problems with your pipenv installation, you can also run the c
 - During the first execution of an extraction you need a stable internet connection as the required DBpedia files are downloaded automatically 
 
 ### Setup
-
-- Navigate to the source directory of the project
-
-- Create and initialize a virtual environment with pipenv (run in terminal):
+- In the project source directory, create and initialize a virtual environment with pipenv (run in terminal):
 ```
 pipenv install
 ```
@@ -49,19 +45,29 @@ You can configure the application-specific parameters as well as logging- and fi
 
 ## Usage
 
-- Run the extraction methods with pipenv:
+### Extractors
+Run the extraction methods with pipenv:
 ```
 pipenv run cat2ax.py
 pipenv run catriple.py
 pipenv run cdf.py
 ```
-(All the required resources - e.g. DBpedia files - will be downloaded automatically and on-demand)
+All the required resources, like DBpedia files, will be downloaded automatically during execution.
+The extracted axioms and assertions are placed in the `results` folder.
 
-- If you want to extract the type lexicalisations (not necessary as we provide them as cache file), run the following:
+### Lexicalisations
+If you want to extract the type lexicalisations (not necessary as we provide them as cache file), run the following:
 ```
 pipenv run type_lexicalisations.py
 ```
-(Note that the extraction of type lexicalisations might take several days!)
+Note that the extraction of type lexicalisations might take several days!
+
+### Graphs
+To reproduce the main graphs of the paper, first run the extraction (or download the results and place them in the `results` folder) and then run the following:
+```
+pipenv run graphs.py
+```
+The produced graphs are placed in the `results` folder.
 
 ## Results
 
