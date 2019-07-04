@@ -65,18 +65,18 @@ def _generate_minimum_confidence_graph():
 def _generate_dbpedia_coverage_graph():
     """Create graph of Figure 4a"""
     # retrieve data from extracted axioms and assertions
-    cat2ax_relation_axioms = pd.read_csv(util.get_results_file('results.cat2ax.relation_axioms'))
-    cat2ax_type_axioms = pd.read_csv(util.get_results_file('results.cat2ax.type_axioms'))
-    cat2ax_relation_triples = pd.read_csv(util.get_results_file('results.cat2ax.relation_assertions'))
-    cat2ax_type_triples = pd.read_csv(util.get_results_file('results.cat2ax.type_assertions'))
+    cat2ax_relation_axioms = pd.read_csv(util.get_results_file('results.cat2ax.relation_axioms'), sep=';')
+    cat2ax_type_axioms = pd.read_csv(util.get_results_file('results.cat2ax.type_axioms'), sep=';')
+    cat2ax_relation_triples = pd.read_csv(util.get_results_file('results.cat2ax.relation_assertions'), sep=';')
+    cat2ax_type_triples = pd.read_csv(util.get_results_file('results.cat2ax.type_assertions'), sep=';')
 
-    catriples_relation_axioms = pd.read_csv(util.get_results_file('results.catriples.relation_axioms'))
-    catriples_relation_triples = pd.read_csv(util.get_results_file('results.catriples.relation_assertions'))
+    catriples_relation_axioms = pd.read_csv(util.get_results_file('results.catriples.relation_axioms'), sep=';')
+    catriples_relation_triples = pd.read_csv(util.get_results_file('results.catriples.relation_assertions'), sep=';')
 
-    cdf_relation_axioms = pd.read_csv(util.get_results_file('results.cdf.relation_axioms'))
-    cdf_type_axioms = pd.read_csv(util.get_results_file('results.cdf.type_axioms'))
-    cdf_relation_triples = pd.read_csv(util.get_results_file('results.cdf.relation_assertions'))
-    cdf_type_triples = pd.read_csv(util.get_results_file('results.cdf.type_assertions'))
+    cdf_relation_axioms = pd.read_csv(util.get_results_file('results.cdf.relation_axioms'), sep=';')
+    cdf_type_axioms = pd.read_csv(util.get_results_file('results.cdf.type_axioms'), sep=';')
+    cdf_relation_triples = pd.read_csv(util.get_results_file('results.cdf.relation_assertions'), sep=';')
+    cdf_type_triples = pd.read_csv(util.get_results_file('results.cdf.type_assertions'), sep=';')
 
     # retrieve unique entity counts
     cat2ax_cat_count = len(set(cat2ax_relation_axioms['cat'].unique()) | set(cat2ax_type_axioms['cat'].unique()))
@@ -126,17 +126,17 @@ def _generate_dbpedia_coverage_graph():
 def _generate_dbpedia_unknown_resources_graph():
     """Create graph of Figure 4b"""
     # retrieve data from extracted assertions
-    cat2ax_relation_triples = pd.read_csv(util.get_results_file('results.cat2ax.relation_assertions'))
+    cat2ax_relation_triples = pd.read_csv(util.get_results_file('results.cat2ax.relation_assertions'), sep=';')
     cat2ax_new_relation_resources = len({r for r in cat2ax_relation_triples['sub'].unique() if not dbp_store.get_properties(r)})
-    cat2ax_type_triples = pd.read_csv(util.get_results_file('results.cat2ax.type_assertions'))
+    cat2ax_type_triples = pd.read_csv(util.get_results_file('results.cat2ax.type_assertions'), sep=';')
     cat2ax_new_type_resources = len({r for r in cat2ax_type_triples['sub'].unique() if not dbp_store.get_types(r)})
 
-    catriples_relation_triples = pd.read_csv(util.get_results_file('results.catriples.relation_assertions'))
+    catriples_relation_triples = pd.read_csv(util.get_results_file('results.catriples.relation_assertions'), sep=';')
     catriples_new_relation_resources = len({r for r in catriples_relation_triples['sub'].unique() if not dbp_store.get_properties(r)})
 
-    cdf_relation_triples = pd.read_csv(util.get_results_file('results.cdf.relation_assertions'))
+    cdf_relation_triples = pd.read_csv(util.get_results_file('results.cdf.relation_assertions'), sep=';')
     cdf_new_relation_resources = len({r for r in cdf_relation_triples['sub'].unique() if not dbp_store.get_properties(r)})
-    cdf_type_triples = pd.read_csv(util.get_results_file('results.cdf.type_assertions'))
+    cdf_type_triples = pd.read_csv(util.get_results_file('results.cdf.type_assertions'), sep=';')
     cdf_new_type_resources = len({r for r in cdf_type_triples['sub'].unique() if not dbp_store.get_types(r)})
 
     # initialise bars
