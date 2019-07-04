@@ -70,8 +70,8 @@ def _generate_dbpedia_coverage_graph():
     cat2ax_relation_triples = pd.read_csv(util.get_results_file('results.cat2ax.relation_assertions'), sep=';')
     cat2ax_type_triples = pd.read_csv(util.get_results_file('results.cat2ax.type_assertions'), sep=';')
 
-    catriples_relation_axioms = pd.read_csv(util.get_results_file('results.catriples.relation_axioms'), sep=';')
-    catriples_relation_triples = pd.read_csv(util.get_results_file('results.catriples.relation_assertions'), sep=';')
+    catriple_relation_axioms = pd.read_csv(util.get_results_file('results.catriple.relation_axioms'), sep=';')
+    catriple_relation_triples = pd.read_csv(util.get_results_file('results.catriple.relation_assertions'), sep=';')
 
     cdf_relation_axioms = pd.read_csv(util.get_results_file('results.cdf.relation_axioms'), sep=';')
     cdf_type_axioms = pd.read_csv(util.get_results_file('results.cdf.type_axioms'), sep=';')
@@ -80,26 +80,26 @@ def _generate_dbpedia_coverage_graph():
 
     # retrieve unique entity counts
     cat2ax_cat_count = len(set(cat2ax_relation_axioms['cat'].unique()) | set(cat2ax_type_axioms['cat'].unique()))
-    catriples_cat_count = len(set(catriples_relation_axioms['cat'].unique()))
+    catriple_cat_count = len(set(catriple_relation_axioms['cat'].unique()))
     cdf_cat_count = len(set(cdf_relation_axioms['cat'].unique()) | set(cdf_type_axioms['cat'].unique()))
     total_cat_count = len(cat_store.get_usable_cats())
 
     cat2ax_preds = cat2ax_relation_triples.groupby(by='pred').count()
     cat2ax_pred_count = len(cat2ax_preds[cat2ax_preds['sub'] >= 100].index)
-    catriples_preds = catriples_relation_triples.groupby(by='pred').count()
-    catriples_pred_count = len(catriples_preds[catriples_preds['sub'] >= 100].index)
+    catriple_preds = catriple_relation_triples.groupby(by='pred').count()
+    catriple_pred_count = len(catriple_preds[catriple_preds['sub'] >= 100].index)
     cdf_preds = cdf_relation_triples.groupby(by='pred').count()
     cdf_pred_count = len(cdf_preds[cdf_preds['sub'] >= 100].index)
     total_pred_count = len(dbp_store.get_all_predicates())
 
     cat2ax_res_count = len(set(cat2ax_relation_triples['sub'].unique()) | set(cat2ax_type_triples['sub'].unique()))
-    catriples_res_count = len(set(catriples_relation_triples['sub'].unique()))
+    catriple_res_count = len(set(catriple_relation_triples['sub'].unique()))
     cdf_res_count = len(set(cdf_relation_triples['sub'].unique()) | set(cdf_type_triples['sub'].unique()))
     total_res_count = len(dbp_store.get_resources())
 
     # initialise bars
     bars_ca = [cat2ax_cat_count / total_cat_count, cat2ax_res_count / total_res_count, cat2ax_pred_count / total_pred_count]
-    bars_ct = [catriples_cat_count / total_cat_count, catriples_res_count / total_res_count, catriples_pred_count / total_pred_count]
+    bars_ct = [catriple_cat_count / total_cat_count, catriple_res_count / total_res_count, catriple_pred_count / total_pred_count]
     bars_cdf = [cdf_cat_count / total_cat_count, cdf_res_count / total_res_count, cdf_pred_count / total_pred_count]
 
     # arrange bars
@@ -131,8 +131,8 @@ def _generate_dbpedia_unknown_resources_graph():
     cat2ax_type_triples = pd.read_csv(util.get_results_file('results.cat2ax.type_assertions'), sep=';')
     cat2ax_new_type_resources = len({r for r in cat2ax_type_triples['sub'].unique() if not dbp_store.get_types(r)})
 
-    catriples_relation_triples = pd.read_csv(util.get_results_file('results.catriples.relation_assertions'), sep=';')
-    catriples_new_relation_resources = len({r for r in catriples_relation_triples['sub'].unique() if not dbp_store.get_properties(r)})
+    catriple_relation_triples = pd.read_csv(util.get_results_file('results.catriple.relation_assertions'), sep=';')
+    catriple_new_relation_resources = len({r for r in catriple_relation_triples['sub'].unique() if not dbp_store.get_properties(r)})
 
     cdf_relation_triples = pd.read_csv(util.get_results_file('results.cdf.relation_assertions'), sep=';')
     cdf_new_relation_resources = len({r for r in cdf_relation_triples['sub'].unique() if not dbp_store.get_properties(r)})
@@ -141,7 +141,7 @@ def _generate_dbpedia_unknown_resources_graph():
 
     # initialise bars
     bars_ca = [cat2ax_new_relation_resources, cat2ax_new_type_resources]
-    bars_ct = [catriples_new_relation_resources, 0]
+    bars_ct = [catriple_new_relation_resources, 0]
     bars_cdf = [cdf_new_relation_resources, cdf_new_type_resources]
 
     # arrange bars
