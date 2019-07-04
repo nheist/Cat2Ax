@@ -48,9 +48,9 @@ You can configure the application-specific parameters as well as logging- and fi
 ### Extractors
 Run the extraction methods with pipenv:
 ```
-pipenv run cat2ax.py
-pipenv run catriple.py
-pipenv run cdf.py
+pipenv run cat2ax.py    # approx.  7h runtime
+pipenv run catriple.py  # approx.  8h runtime
+pipenv run cdf.py       # approx. 12h runtime
 ```
 All the required resources, like DBpedia files, will be downloaded automatically during execution.
 The extracted axioms and assertions are placed in the `results` folder.
@@ -58,14 +58,13 @@ The extracted axioms and assertions are placed in the `results` folder.
 ### Lexicalisations
 If you want to extract the type lexicalisations (not necessary as we provide them as cache file), run the following:
 ```
-pipenv run type_lexicalisations.py
+pipenv run type_lexicalisations.py  # runtime of several days!
 ```
-Note that the extraction of type lexicalisations might take several days!
 
 ### Graphs
 To reproduce the main graphs of the paper, first run the extraction (or download the results and place them in the `results` folder) and then run the following:
 ```
-pipenv run graphs.py
+pipenv run graphs.py     # approx. 0.5h runtime
 ```
 The produced graphs are placed in the `results` folder.
 
