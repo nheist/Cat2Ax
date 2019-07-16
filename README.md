@@ -29,17 +29,10 @@ Note: If you have problems with your pipenv installation, you can also run the c
 pipenv install
 ```
 
-- Download the spacy corpus (run in terminal):
-
+- If you have not downloaded them already, you have to fetch the corpora for spaCy and nltk-wordnet (run in terminal):
 ```
-pipenv run python -m spacy download en_core_web_lg
-```
-
-- Download the wordnet corpus of nltk (run in python):
-
-```
-import nltk
-nltk.download('wordnet')
+pipenv run python -m spacy download en_core_web_lg            # download the most recent corpus of spaCy
+pipenv run python -c 'import nltk; nltk.download("wordnet")'  # download the wordnet corpus of ntlk
 ```
 
 ### Basic Configuration Options
