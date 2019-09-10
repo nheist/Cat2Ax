@@ -43,6 +43,7 @@ You can configure the application-specific parameters as well as logging- and fi
 
 ### Extractors
 Run the extraction methods with pipenv:
+
 (Hint: A parallel execution of the extraction scripts is not recommended and might lead to incorrect results or errors)
 
 ```
