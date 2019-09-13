@@ -73,7 +73,7 @@ def _find_X_and_Z(cat_uri: str) -> tuple:
     by_indices = [w.i for w in cat if w.text == 'by']
     if len(by_indices) > 1:
         return None
-    elif len(by_indices) == 1:  # "X by Z"
+    elif len(by_indices) == 1 and len(cat) > (by_indices[0] + 1):  # "X by Z"
         by_index = by_indices[0]
         X = cat[:by_index]
         Z_span = cat[by_index+1:]
