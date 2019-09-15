@@ -47,9 +47,9 @@ Run the extraction methods with pipenv:
 (Hint: A parallel execution of the extraction scripts is not recommended and might lead to incorrect results or errors)
 
 ```
-pipenv run cat2ax.py    # approx.  7h runtime
-pipenv run catriple.py  # approx.  8h runtime
-pipenv run cdf.py       # approx. 12h runtime
+pipenv run python3 cat2ax.py    # approx.  7h runtime
+pipenv run python3 catriple.py  # approx.  8h runtime
+pipenv run python3 cdf.py       # approx. 12h runtime
 ```
 
 All the required resources, like DBpedia files, will be downloaded automatically during execution.
