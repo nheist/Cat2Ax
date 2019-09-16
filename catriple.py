@@ -69,7 +69,7 @@ def _extract_patterns() -> dict:
 
 def _find_X_and_Z(cat_uri: str) -> tuple:
     """Return both X and Z, if available, or X only."""
-    cat = cat_nlp.parse_category(cat_store.get_label(cat_uri))
+    cat = cat_nlp.parse_category(cat_uri)
     by_indices = [w.i for w in cat if w.text == 'by']
     if len(by_indices) > 1:
         return None, None
