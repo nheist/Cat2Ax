@@ -12,7 +12,6 @@ import impl.dbpedia.util as dbp_util
 import impl.util.rdf as rdf_util
 from nltk.metrics.distance import edit_distance
 from spacy.tokens import Span
-from typing import Optional
 
 
 def run_extraction():
@@ -25,9 +24,11 @@ def run_extraction():
     """
     util.get_logger().debug('Step 1: Pattern Extraction')
     patterns = _extract_patterns()
+    util.get_logger().debug(f'Finished Pattern Extraction - Found {len(patterns)} patterns.')
 
     util.get_logger().debug('Step 2: Axiom Extraction')
     relation_axioms = _extract_axioms(patterns)
+    util.get_logger().debug(f'Finished Axiom Extraction - Found {len(relation_axioms)} axioms.')
 
     util.get_logger().debug('Step 3: Assertion Extraction')
     relation_assertions = _extract_assertions(relation_axioms)
@@ -52,9 +53,8 @@ def _extract_patterns() -> dict:
     patterns = {}
     for cat in cat_store.get_usable_cats():
         # locate parents that follow the pattern "X by Z" or "X"
-        X_and_Z = _find_X_and_Z(cat)
-        if X_and_Z:
-            X, Z = X_and_Z
+        X, Z = _find_X_and_Z(cat)
+        if X:
             subcats = [cat for cat in cat_store.get_children(cat) if cat_store.is_usable(cat)]
             for subcat in subcats:
                 # find Y by checking for the patterns "X <prep> Y" and "YX"
@@ -72,7 +72,7 @@ def _find_X_and_Z(cat_uri: str) -> tuple:
     cat = cat_nlp.parse_category(cat_store.get_label(cat_uri))
     by_indices = [w.i for w in cat if w.text == 'by']
     if len(by_indices) > 1:
-        return None
+        return None, None
     elif len(by_indices) == 1 and len(cat) > (by_indices[0] + 1):  # "X by Z"
         by_index = by_indices[0]
         X = cat[:by_index]
@@ -85,7 +85,7 @@ def _find_X_and_Z(cat_uri: str) -> tuple:
     return X, Z
 
 
-def _find_Y(X: Span, subcat_uri: str) -> Optional[str]:
+def _find_Y(X: Span, subcat_uri: str):
     """Return Y if the category follows one of the patterns 'YX' or 'X <prep> Y'."""
     if X.text.lower() not in cat_store.get_label(subcat_uri).lower():
         return None
@@ -121,7 +121,7 @@ def _extract_axioms(patterns: dict) -> set:
             if pred.lower() in predicate_names:
                 axioms[cat] = (sub, predicate_names[pred.lower()], subcats)
         else:  # Voting required to discover Z (case 2)
-            predicate_counts = defaultdict(lambda: 0)
+            predicate_counts = defaultdict(int)
             for subcat, value in subcats.items():
                 value = normalize_val(value)
                 for res in cat_store.get_resources(subcat):
