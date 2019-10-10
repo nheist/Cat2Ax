@@ -1,5 +1,7 @@
 # Cat2Ax
 
+[![DOI](https://zenodo.org/badge/193064292.svg)](https://zenodo.org/badge/latestdoi/193064292)
+
 Cat2Ax is an approach for the extraction of axioms and assertions for Wikipedia categories to enrich the ontology of a Wikipedia-based knowledge graph.
 
 In this package you can also find implementations of the two most closely related approaches Catriple and C-DF.
