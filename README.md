@@ -1,8 +1,6 @@
 # Cat2Ax
 
-Code | [![DOI](https://zenodo.org/badge/193064292.svg)](https://zenodo.org/badge/latestdoi/193064292)
-
-Axioms & Assertions | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3482775.svg)](https://doi.org/10.5281/zenodo.3482775)
+Code | [![DOI](https://zenodo.org/badge/193064292.svg)](https://zenodo.org/badge/latestdoi/193064292) (Code)  |  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3482775.svg)](https://doi.org/10.5281/zenodo.3482775) (Axioms & Assertions)
 
 Cat2Ax is an approach for the extraction of axioms and assertions for Wikipedia categories to enrich the ontology of a Wikipedia-based knowledge graph.
 
