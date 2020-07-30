@@ -8,7 +8,16 @@ In this package you can also find implementations of the two most closely relate
 
 __How to cite?__
 
-```Heist, Nicolas; Paulheim, Heiko. Uncovering the Semantics of Wikipedia Categories. ISWC 2019. Auckland, NZ.```
+```
+@inproceedings{heist2019uncovering,
+  title={Uncovering the Semantics of Wikipedia Categories},
+  author={Heist, Nicolas and Paulheim, Heiko},
+  booktitle={International Semantic Web Conference},
+  pages={219--236},
+  year={2019},
+  organization={Springer}
+}
+```
 
 A preprint of the paper can be found [on arXiv](http://arxiv.org/abs/1906.12089).
 
